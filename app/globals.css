@@ -1,26 +1,81 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
+/* Brand tokens (SRD section 4), matched to the black-and-gold packaging. */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --black: #0b0b0b;
+  --charcoal: #161616;
+  --gold: #c9a24b;
+  --gold-dark: #8a6a22; /* gold for text on white: passes WCAG AA */
+  --white: #ffffff;
+  --off-white: #f7f5f0;
+  --muted-text: #6b6b6b;
+  /* Botanical accent for ingredient content. sage-dark passes WCAG AA on white and off-white. */
+  --sage: #7d8c63;
+  --sage-dark: #4a5638;
+  --cream: #efe9dc;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-black: var(--black);
+  --color-charcoal: var(--charcoal);
+  --color-gold: var(--gold);
+  --color-gold-dark: var(--gold-dark);
+  --color-white: var(--white);
+  --color-off-white: var(--off-white);
+  --color-muted: var(--muted-text);
+  --color-sage: var(--sage);
+  --color-sage-dark: var(--sage-dark);
+  --color-cream: var(--cream);
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-display), ui-serif, Georgia, serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--white);
+  color: var(--black);
+}
+
+::selection {
+  background: var(--gold);
+  color: var(--black);
+}
+
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
+/* Smooth open/close for <details> accordions in supporting browsers. */
+:root {
+  interpolate-size: allow-keywords;
+}
+details::details-content {
+  block-size: 0;
+  overflow: hidden;
+  transition:
+    block-size 300ms ease-out,
+    content-visibility 300ms allow-discrete;
+}
+details[open]::details-content {
+  block-size: auto;
+}
+summary::-webkit-details-marker {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }

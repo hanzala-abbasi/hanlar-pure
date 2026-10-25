@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ProductStatus {
+  ACTIVE
+  OUT_OF_STOCK
+  DRAFT
+  ARCHIVED
+}
+
+model Product {
+  id               String         @id @default(cuid())
+  slug             String         @unique
+  name             String
+  shortDescription String
+  description      String // markdown or plain text
+  ingredients      String?
+  benefits         String? // newline-separated
+  howToUse         String?
+  price            Int // PKR, whole rupees
+  size             String // e.g. "250 ml"
+  status           ProductStatus  @default(DRAFT)
+  featured         Boolean        @default(false)
+  sortOrder        Int            @default(0)
+  faqs             Json? // [{ q: string, a: string }]
+  images           ProductImage[]
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  @@index([status, sortOrder])
+}
+
+model ProductImage {
+  id        String  @id @default(cuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  url       String
+  alt       String?
+  position  Int     @default(0)
+  isPrimary Boolean @default(false)
+
+  @@index([productId, position])
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+// Single row (id = "default") holding contact and social details editable from /admin/settings.
+model SiteSettings {
+  id             String   @id @default("default")
+  whatsappNumber String
+  email          String
+  phone          String
+  address        String
+  instagramUrl   String   @default("")
+  facebookUrl    String   @default("")
+  tiktokUrl      String   @default("")
+  deliveryTitle  String
+  deliveryInfo   String // one line per bullet
+  updatedAt      DateTime @updatedAt
+}
