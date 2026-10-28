@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Mail, Package, Settings } from "lucide-react";
+import { GalleryHorizontal, LayoutDashboard, Mail, Package, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const items = [
   { href: "/admin", label: "Overview", Icon: LayoutDashboard },
   { href: "/admin/products", label: "Products", Icon: Package },
+  { href: "/admin/banners", label: "Banners", Icon: GalleryHorizontal },
   { href: "/admin/messages", label: "Messages", Icon: Mail },
   { href: "/admin/settings", label: "Settings", Icon: Settings },
 ];

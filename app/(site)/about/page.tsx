@@ -27,8 +27,8 @@ export default function AboutPage() {
         <Container className="grid items-center gap-12 md:grid-cols-2">
           <FadeIn className="relative aspect-[4/5] overflow-hidden bg-off-white">
             <Image
-              src="/images/products/hair-oil-1.jpg"
-              alt="HANLAR PURE Hair Oil: nourish, strengthen, shine"
+              src="/images/lifestyle/hair-oil-vanity.jpg"
+              alt="HANLAR PURE Hair Oil on travertine with amla, almonds, rosemary and a dish of oil"
               fill
               priority
               sizes="(min-width: 768px) 50vw, 100vw"

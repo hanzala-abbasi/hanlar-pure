@@ -22,14 +22,14 @@ const labels: { line: ProductLine; title: string; href: string; image: string; a
     title: "Signature Black Shampoo",
     href: "/shop/signature-black-shampoo",
     image: "/images/products/signature-black-200-2.jpg",
-    alt: "Signature Black Shampoo side label listing its pure ingredients",
+    alt: "Signature Black Shampoo with reetha soapnuts, shikakai pods and rosemary",
   },
   {
     line: "Hair Oil",
     title: "Hair Oil",
     href: "/shop/hair-oil",
-    image: "/images/products/hair-oil-2.jpg",
-    alt: "Hair Oil label listing its botanical extracts and premium oils",
+    image: "/images/lifestyle/ritual-flatlay.jpg",
+    alt: "Hair Oil on linen with amla, almonds and rosemary",
   },
 ];
 

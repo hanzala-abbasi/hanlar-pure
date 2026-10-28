@@ -6,9 +6,10 @@ import { revalidatePath } from "next/cache";
 import { Prisma } from "@prisma/client";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
+import { defaultBanners } from "@/config/banners";
 import { createSession, destroySession, passwordMatches, requireAdmin } from "@/lib/auth";
 import { rateLimit, resetRateLimit } from "@/lib/rate-limit";
-import { productSchema, productStatuses, settingsSchema } from "@/lib/validations";
+import { bannerSchema, productSchema, productStatuses, settingsSchema } from "@/lib/validations";
 
 export type ActionResult = { ok: true; id?: string } | { ok: false; error: string; fieldErrors?: Record<string, string[]> };
 
@@ -127,6 +128,60 @@ export async function deleteProduct(id: string): Promise<ActionResult> {
   await prisma.product.delete({ where: { id } });
   revalidateCatalog([product.slug]);
   return { ok: true };
+}
+
+// ---------- Banners ----------
+
+export async function saveBanner(id: string | null, input: unknown): Promise<ActionResult> {
+  await requireAdmin();
+  const parsed = bannerSchema.safeParse(input);
+  if (!parsed.success) {
+    return { ok: false, error: "Please fix the highlighted fields.", fieldErrors: z.flattenError(parsed.error).fieldErrors };
+  }
+  try {
+    const banner = id
+      ? await prisma.banner.update({ where: { id }, data: parsed.data })
+      : await prisma.banner.create({ data: parsed.data });
+    revalidatePath("/");
+    revalidatePath("/admin/banners");
+    return { ok: true, id: banner.id };
+  } catch {
+    return { ok: false, error: "Could not save the banner." };
+  }
+}
+
+/** Copies the launch banners into the database so the owner can edit them. Only when none exist yet. */
+export async function importDefaultBanners(): Promise<ActionResult> {
+  await requireAdmin();
+  if ((await prisma.banner.count()) > 0) return { ok: false, error: "Banners already exist." };
+  await prisma.banner.createMany({ data: defaultBanners.map((b, i) => ({ ...b, sortOrder: i })) });
+  revalidatePath("/");
+  revalidatePath("/admin/banners");
+  return { ok: true };
+}
+
+export async function setBannerActive(id: string, active: boolean): Promise<ActionResult> {
+  await requireAdmin();
+  try {
+    await prisma.banner.update({ where: { id }, data: { active: !!active } });
+    revalidatePath("/");
+    revalidatePath("/admin/banners");
+    return { ok: true };
+  } catch {
+    return { ok: false, error: "Could not update the banner." };
+  }
+}
+
+export async function deleteBanner(id: string): Promise<ActionResult> {
+  await requireAdmin();
+  try {
+    await prisma.banner.delete({ where: { id } });
+    revalidatePath("/");
+    revalidatePath("/admin/banners");
+    return { ok: true };
+  } catch {
+    return { ok: false, error: "Could not delete the banner." };
+  }
 }
 
 // ---------- Site settings ----------

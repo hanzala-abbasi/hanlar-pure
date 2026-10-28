@@ -3,6 +3,7 @@
 // Safe to re-run: products are upserted by slug, so existing edits to other fields are overwritten
 // only for these three slugs. Placeholder products from the first seed are archived.
 import { PrismaClient, type Prisma } from "@prisma/client";
+import { defaultBanners } from "../config/banners";
 
 const prisma = new PrismaClient();
 
@@ -41,10 +42,10 @@ const products: Seed[] = [
     sortOrder: 0,
     faqs: shampooFaqs,
     images: [
-      { url: "/images/products/signature-black-200-1.jpg", alt: "Signature Black Shampoo 200 ml bottle, front label" },
-      { url: "/images/products/signature-black-200-2.jpg", alt: "Side label listing the pure ingredients" },
-      { url: "/images/products/signature-black-200-3.jpg", alt: "Back label: about the product, benefits and directions" },
-      { url: "/images/products/signature-black-200-4.jpg", alt: "Side label: order and reviews, Pure Ingredients Real Care" },
+      { url: "/images/products/signature-black-200-1.jpg", alt: "Signature Black Shampoo 200 ml on a stone ledge with gold line art" },
+      { url: "/images/products/signature-black-200-2.jpg", alt: "Signature Black Shampoo 200 ml with reetha soapnuts, shikakai pods and rosemary" },
+      { url: "/images/products/signature-black-200-3.jpg", alt: "Signature Black Shampoo 200 ml on a black marble plinth" },
+      { url: "/images/products/signature-black-200-4.jpg", alt: "Signature Black Shampoo 200 ml in front of smooth, glossy dark hair" },
     ],
   },
   {
@@ -71,8 +72,12 @@ const products: Seed[] = [
       { q: "Will it feel greasy?", a: "Use a small amount and focus on the scalp and ends. Wash it out with shampoo after your treatment." },
     ],
     images: [
-      { url: "/images/products/hair-oil-1.jpg", alt: "HANLAR PURE Hair Oil 100 ml pump bottle, front label" },
-      { url: "/images/products/hair-oil-2.jpg", alt: "Hair Oil label listing its ingredients" },
+      { url: "/images/products/hair-oil-1.jpg", alt: "HANLAR PURE Hair Oil 100 ml on a travertine plinth" },
+      { url: "/images/products/hair-oil-2.jpg", alt: "Hair Oil 100 ml in soft golden light with leaves" },
+      { url: "/images/lifestyle/ritual-hands.jpg", alt: "A few drops of Hair Oil pumped into the palm" },
+      { url: "/images/lifestyle/hair-oil-vanity.jpg", alt: "Hair Oil on travertine with amla, almonds and rosemary" },
+      { url: "/images/products/hair-oil-3.jpg", alt: "Hair Oil 100 ml on a dark reflective surface" },
+      { url: "/images/lifestyle/hair-oil-models.jpg", alt: "Two models with HANLAR PURE Hair Oil" },
     ],
   },
   {
@@ -91,8 +96,9 @@ const products: Seed[] = [
     sortOrder: 2,
     faqs: shampooFaqs,
     images: [
-      { url: "/images/products/signature-black-100-1.jpg", alt: "Signature Black Shampoo 100 ml bottle, front label" },
-      { url: "/images/products/signature-black-100-2.jpg", alt: "Signature Black Shampoo 100 ml, back label" },
+      { url: "/images/products/signature-black-100-1.jpg", alt: "Signature Black Shampoo 100 ml on a gold-lit plinth" },
+      { url: "/images/products/signature-black-100-2.jpg", alt: "Signature Black Shampoo 100 ml beside a sweep of glossy black hair" },
+      { url: "/images/lifestyle/signature-black-100-models.jpg", alt: "Two models with Signature Black Shampoo 100 ml" },
     ],
   },
 ];
@@ -111,6 +117,12 @@ async function main() {
     }
     console.log(`Seeded ${data.name}`);
   }
+  // Banners are only seeded once, so later edits in Admin > Banners are never overwritten.
+  if ((await prisma.banner.count()) === 0) {
+    await prisma.banner.createMany({ data: defaultBanners.map((b, i) => ({ ...b, sortOrder: i })) });
+    console.log(`Seeded ${defaultBanners.length} banners`);
+  }
+
   const { count } = await prisma.product.updateMany({
     where: { slug: { in: retiredSlugs } },
     data: { status: "ARCHIVED", featured: false },

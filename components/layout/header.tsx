@@ -10,18 +10,9 @@ import { cn } from "@/lib/utils";
 
 export function Header() {
   const pathname = usePathname();
-  const isHome = pathname === "/";
-  const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const hydrated = useCartHydrated();
   const count = useCartCount();
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   // Close the mobile menu on Escape.
   useEffect(() => {
@@ -35,17 +26,11 @@ export function Header() {
     };
   }, [open]);
 
-  const solid = !isHome || scrolled || open;
   const isActive = (href: string) => (href === "/" ? pathname === "/" : pathname.startsWith(href));
 
   return (
     <>
-      <header
-        className={cn(
-          "fixed inset-x-0 top-0 z-40 transition-colors duration-500",
-          solid ? "border-b border-white/10 bg-black" : "bg-transparent",
-        )}
-      >
+      <header className="fixed inset-x-0 top-0 z-40 border-b border-white/10 bg-black">
         <div className="mx-auto flex h-18 max-w-6xl items-center justify-between px-5 sm:px-8">
           <Link
             href="/"
@@ -55,7 +40,7 @@ export function Header() {
             HANLAR <span className="text-gold">PURE</span>
           </Link>
 
-          <nav aria-label="Main" className="hidden md:block">
+          <nav aria-label="Main" className="hidden lg:block">
             <ul className="flex items-center gap-5 lg:gap-8">
               {siteConfig.nav.map((item) => (
                 <li key={item.href}>
@@ -90,7 +75,7 @@ export function Header() {
             </Link>
             <button
               type="button"
-              className="p-2 text-white transition-colors hover:text-gold md:hidden"
+              className="p-2 text-white transition-colors hover:text-gold lg:hidden"
               aria-label={open ? "Close menu" : "Open menu"}
               aria-expanded={open}
               aria-controls="mobile-menu"
@@ -102,7 +87,7 @@ export function Header() {
         </div>
 
         {open && (
-          <nav id="mobile-menu" aria-label="Mobile" className="h-[calc(100dvh-4.5rem)] bg-black md:hidden">
+          <nav id="mobile-menu" aria-label="Mobile" className="h-[calc(100dvh-4.5rem)] bg-black lg:hidden">
             <ul className="flex flex-col items-center gap-2 pt-12">
               {siteConfig.nav.map((item) => (
                 <li key={item.href}>
@@ -123,8 +108,8 @@ export function Header() {
           </nav>
         )}
       </header>
-      {/* Inner pages start below the fixed header; the home hero sits underneath it. */}
-      {!isHome && <div aria-hidden className="h-18 bg-black" />}
+      {/* Pages start below the fixed header. */}
+      <div aria-hidden className="h-18 bg-black" />
     </>
   );
 }

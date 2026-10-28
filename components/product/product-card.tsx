@@ -1,16 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
-import { matchIngredients } from "@/config/ingredients";
 import type { PublicProduct } from "@/lib/products";
 import { formatPrice } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
-import { buttonClass } from "@/components/ui/button";
 import { AddToCartButton } from "@/components/product/add-to-cart-button";
 
 export function ProductCard({ product, priority = false }: { product: PublicProduct; priority?: boolean }) {
   const [primary, secondary] = product.images;
   const sizes = "(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw";
-  const madeWith = matchIngredients(product.ingredients);
 
   return (
     <article className="group flex flex-col">
@@ -48,35 +45,22 @@ export function ProductCard({ product, priority = false }: { product: PublicProd
             {product.name}
           </Link>
         </h3>
-        <p className="mt-1 text-sm text-muted">{product.size}</p>
-        {madeWith.length > 0 && (
-          <p className="mt-2 text-xs tracking-wide text-sage-dark">
-            {madeWith
-              .slice(0, 3)
-              .map((i) => i.name)
-              .join(" · ")}
-            {madeWith.length > 3 && ` + ${madeWith.length - 3} more`}
-          </p>
-        )}
-        <p className="mt-2 font-medium">{formatPrice(product.price)}</p>
-        <div className="mt-5 grid grid-cols-2 gap-2">
-          <Link href={`/shop/${product.slug}`} className={buttonClass("outline-dark", "px-3")}>
-            View Details
-          </Link>
-          <AddToCartButton
-            variant="dark"
-            className="px-3"
-            product={{
-              id: product.id,
-              name: product.name,
-              slug: product.slug,
-              price: product.price,
-              size: product.size,
-              image: primary?.url,
-              inStock: product.inStock,
-            }}
-          />
-        </div>
+        <p className="mt-1 text-sm text-muted">
+          {product.size} · <span className="text-black">{formatPrice(product.price)}</span>
+        </p>
+        <AddToCartButton
+          variant="outline-dark"
+          className="mx-auto mt-5 w-full max-w-60"
+          product={{
+            id: product.id,
+            name: product.name,
+            slug: product.slug,
+            price: product.price,
+            size: product.size,
+            image: primary?.url,
+            inStock: product.inStock,
+          }}
+        />
       </div>
     </article>
   );

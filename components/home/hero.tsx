@@ -1,95 +1,154 @@
-import Image from "next/image";
-import { extractCount, oilCount } from "@/config/ingredients";
+"use client";
+
+import Image, { getImageProps } from "next/image";
+import { useEffect, useState } from "react";
+import { useReducedMotion } from "framer-motion";
+import type { PublicBanner } from "@/lib/banners";
 import { ButtonLink } from "@/components/ui/button";
-import { Container } from "@/components/ui/container";
-import { FadeIn } from "@/components/ui/fade-in";
-import { LeafSprig } from "@/components/ui/leaf-ornament";
+import { useFocalPosition } from "@/components/ui/focal-image";
+import { cn } from "@/lib/utils";
 
-const highlights = ["Amla", "Reetha", "Shikakai", "Bhringraj", "Rosemary", "Argan Oil"];
+const INTERVAL_MS = 6000;
+const DESKTOP_SIZES = "(min-width: 1024px) 65vw, 100vw";
 
-export function Hero() {
-  const stats = [
-    { value: extractCount, label: "Botanical extracts" },
-    { value: oilCount, label: "Oils & vitamins" },
-    { value: "PK", label: "Made in Pakistan" },
-  ];
+/** Banner image, with an optional portrait image for phones (art direction via <picture>). */
+function BannerImage({ banner, priority }: { banner: PublicBanner; priority: boolean }) {
+  const { ref, style } = useFocalPosition(banner.focusX);
+
+  if (!banner.mobileImageUrl) {
+    return (
+      <Image
+        ref={ref}
+        src={banner.imageUrl}
+        alt={banner.imageAlt}
+        fill
+        priority={priority}
+        sizes={DESKTOP_SIZES}
+        style={style}
+        className="object-cover"
+      />
+    );
+  }
+
+  const common = { alt: banner.imageAlt, fill: true, priority, style, className: "object-cover" };
+  const { props: desktop } = getImageProps({ ...common, src: banner.imageUrl, sizes: DESKTOP_SIZES });
+  const { props: mobile } = getImageProps({ ...common, src: banner.mobileImageUrl, sizes: "100vw" });
+  return (
+    <picture>
+      <source media="(min-width: 1024px)" srcSet={desktop.srcSet} sizes={desktop.sizes} />
+      {/* eslint-disable-next-line jsx-a11y/alt-text -- alt comes from getImageProps */}
+      <img {...mobile} ref={ref} />
+    </picture>
+  );
+}
+
+/**
+ * Home hero: full-width banner with white-and-gold copy on a dark, blurred backdrop. Banners cross-fade
+ * automatically (no buttons), pausing while hovered or when the visitor prefers reduced motion.
+ */
+export function Hero({ banners }: { banners: PublicBanner[] }) {
+  const [index, setIndex] = useState(0);
+  const [hovered, setHovered] = useState(false);
+  const reduce = useReducedMotion();
+  const count = banners.length;
+
+  useEffect(() => {
+    if (count < 2 || hovered || reduce) return;
+    const id = window.setTimeout(() => setIndex((i) => (i + 1) % count), INTERVAL_MS);
+    return () => window.clearTimeout(id);
+  }, [index, count, hovered, reduce]);
+
+  if (count === 0) return null;
+
+  // Text column: from the page container's left edge, 24rem wide. The sharp banner starts where it ends.
+  const textLeft = "lg:pl-[max(2rem,calc((100vw-72rem)/2+2rem))]";
 
   return (
-    <section className="relative overflow-hidden bg-black text-white">
-      {/* Soft gold glow and botanical line art, as on the labels */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute top-1/2 right-0 size-[640px] -translate-y-1/2 translate-x-1/4 rounded-full bg-gold/10 blur-3xl"
-      />
-      <LeafSprig className="pointer-events-none absolute -bottom-6 -left-6 h-72 text-gold/25 md:h-96" />
-      <LeafSprig className="pointer-events-none absolute top-20 right-4 hidden h-64 -scale-x-100 text-gold/20 lg:block" />
-
-      <Container className="relative grid min-h-[100svh] items-center gap-12 pt-28 pb-16 md:grid-cols-2 md:pt-24">
-        <FadeIn className="order-2 text-center md:order-1 md:text-left">
-          <p className="mb-5 text-xs uppercase tracking-[0.35em] text-gold">Pure Ingredients · Real Care</p>
-          <h1 className="font-serif text-5xl leading-[1.05] sm:text-6xl lg:text-7xl">
-            Nature&apos;s Care.
-            <br />
-            <span className="text-gold">Premium Hair.</span>
-          </h1>
-          <p className="mx-auto mt-6 max-w-md leading-relaxed text-white/70 md:mx-0">
-            Botanical shampoo and hair oil made with time-honoured ingredients from South Asian hair-care tradition,
-            finished to a premium standard.
-          </p>
-
-          <ul className="mx-auto mt-6 flex max-w-md flex-wrap justify-center gap-2 md:mx-0 md:justify-start">
-            {highlights.map((h) => (
-              <li key={h} className="border border-gold/30 px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-white/75">
-                {h}
-              </li>
-            ))}
-          </ul>
-
-          <div className="mt-10 flex flex-col justify-center gap-3 sm:flex-row md:justify-start">
-            <ButtonLink href="/shop">Shop Now</ButtonLink>
-            <ButtonLink href="#ingredients" variant="outline-light">
-              Explore Ingredients
-            </ButtonLink>
-          </div>
-
-          <dl className="mt-12 grid max-w-md grid-cols-3 divide-x divide-white/10 border-t border-white/10 pt-6 text-center md:text-left">
-            {stats.map((s) => (
-              <div key={s.label} className="px-3 first:pl-0">
-                <dt className="sr-only">{s.label}</dt>
-                <dd className="font-serif text-3xl text-gold">{s.value}</dd>
-                <dd aria-hidden className="mt-1 text-[10px] uppercase tracking-[0.18em] text-white/55">
-                  {s.label}
-                </dd>
+    <section
+      aria-roledescription="carousel"
+      aria-label="Featured"
+      className="relative bg-black text-white"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      <div className="grid grid-cols-1 lg:h-[clamp(560px,calc(100svh-4.5rem),860px)]">
+        {banners.map((banner, i) => {
+          const active = i === index;
+          const Title = i === 0 ? "h1" : "h2";
+          return (
+            <div
+              key={banner.id}
+              role="group"
+              aria-roledescription="slide"
+              aria-label={`${i + 1} of ${count}`}
+              aria-hidden={!active}
+              inert={!active}
+              className={cn("relative [grid-area:1/1]", active ? "z-10" : "pointer-events-none z-0")}
+            >
+              {/* Visuals: full width. Desktop shows a blurred, darkened copy edge to edge with the sharp banner on the right. */}
+              <div
+                className={cn(
+                  "relative aspect-[4/5] overflow-hidden transition-opacity duration-1000 ease-out sm:aspect-[3/2] lg:absolute lg:inset-0 lg:aspect-auto",
+                  active ? "opacity-100" : "opacity-0",
+                )}
+              >
+                <div aria-hidden className="absolute inset-0 hidden lg:block">
+                  <Image
+                    src={banner.imageUrl}
+                    alt=""
+                    fill
+                    sizes="20vw"
+                    className="scale-110 object-cover blur-2xl brightness-[0.45] saturate-[1.2]"
+                  />
+                </div>
+                <div className="absolute inset-0 lg:left-[calc(max(2rem,calc((100vw-72rem)/2+2rem))+24rem)] lg:[mask-image:linear-gradient(to_right,transparent,black_9rem)]">
+                  <div
+                    className={cn(
+                      "absolute inset-0 transition-transform duration-[7000ms] ease-out",
+                      active && !reduce ? "scale-[1.04]" : "scale-100",
+                    )}
+                  >
+                    <BannerImage banner={banner} priority={i === 0} />
+                  </div>
+                </div>
+                <div aria-hidden className="absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-black to-transparent lg:hidden" />
               </div>
-            ))}
-          </dl>
-        </FadeIn>
 
-        {/* Two bottles in arched frames, the shampoo leading */}
-        <div className="relative order-1 mx-auto w-full max-w-sm md:order-2 md:max-w-md">
-          <div className="relative ml-auto aspect-[4/5] w-[72%] overflow-hidden rounded-t-full border border-gold/30">
-            <Image
-              src="/images/products/signature-black-200-1.jpg"
-              alt="HANLAR PURE Signature Black Shampoo, 200 ml"
-              fill
-              loading="eager"
-              fetchPriority="high"
-              sizes="(min-width: 768px) 320px, 72vw"
-              className="object-cover"
+              {/* Copy: below the image on phones, over the dark left side on desktop */}
+              <div className={cn("relative px-5 pt-6 pb-16 sm:px-8 lg:absolute lg:inset-y-0 lg:left-0 lg:flex lg:w-[calc(max(2rem,calc((100vw-72rem)/2+2rem))+24rem)] lg:items-center lg:py-16 lg:pr-8", textLeft)}>
+                <div
+                  className={cn(
+                    "max-w-md transition-all ease-out",
+                    // The outgoing text leaves quickly; the new text arrives once it has gone, so they never overlap.
+                    active ? "translate-y-0 opacity-100 delay-300 duration-700" : "translate-y-3 opacity-0 duration-300",
+                  )}
+                >
+                  {banner.eyebrow && (
+                    <p className="mb-4 text-[11px] font-medium uppercase tracking-[0.3em] text-gold">{banner.eyebrow}</p>
+                  )}
+                  <Title className="font-serif text-4xl leading-[1.05] text-white sm:text-5xl">{banner.title}</Title>
+                  {banner.subtitle && <p className="mt-5 leading-relaxed text-white/80">{banner.subtitle}</p>}
+                  <ButtonLink href={banner.ctaHref} className="mt-8">
+                    {banner.ctaLabel}
+                  </ButtonLink>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Progress marks: decorative only, the banners change on their own */}
+      {count > 1 && (
+        <div aria-hidden className={cn("absolute bottom-6 left-5 z-20 flex gap-1.5 sm:left-8 lg:left-0", textLeft)}>
+          {banners.map((b, i) => (
+            <span
+              key={b.id}
+              className={cn("h-px transition-all duration-700", i === index ? "w-10 bg-gold" : "w-5 bg-white/30")}
             />
-          </div>
-          <div className="absolute bottom-[-8%] left-0 aspect-[4/5] w-[48%] overflow-hidden rounded-t-full border border-gold/30 shadow-2xl shadow-black">
-            <Image
-              src="/images/products/hair-oil-1.jpg"
-              alt="HANLAR PURE Hair Oil, 100 ml"
-              fill
-              loading="eager"
-              sizes="(min-width: 768px) 215px, 48vw"
-              className="object-cover"
-            />
-          </div>
+          ))}
         </div>
-      </Container>
+      )}
     </section>
   );
 }

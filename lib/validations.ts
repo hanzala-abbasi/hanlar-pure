@@ -83,3 +83,23 @@ export const settingsSchema = z.object({
 });
 
 export type SettingsInput = z.infer<typeof settingsSchema>;
+
+export const bannerSchema = z.object({
+  eyebrow: z.string().trim().max(60),
+  title: z.string().trim().min(2, "Title is required").max(80),
+  subtitle: z.string().trim().max(200),
+  ctaLabel: z.string().trim().min(2, "Button text is required").max(30),
+  ctaHref: z
+    .string()
+    .trim()
+    .max(300)
+    .refine((v) => /^\/[\w\-./#?=&]*$/.test(v) || /^https:\/\/[^\s]+$/.test(v), "Use a page path like /shop or a full https:// link"),
+  imageUrl: imageUrl,
+  mobileImageUrl: imageUrl.nullable(),
+  imageAlt: z.string().trim().max(200),
+  focusX: z.number().int().min(0).max(100),
+  active: z.boolean(),
+  sortOrder: z.number({ error: "Enter a number" }).int().min(-1000).max(1000),
+});
+
+export type BannerInput = z.infer<typeof bannerSchema>;

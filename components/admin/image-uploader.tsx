@@ -9,6 +9,14 @@ import { cn } from "@/lib/utils";
 
 export type FormImage = { url: string; alt: string };
 
+/** Uploads one file (Cloudinary in production, /public/uploads in development) and returns its URL. */
+export async function uploadImage(file: File): Promise<string> {
+  const res = await fetch("/api/admin/upload");
+  const target = await res.json();
+  if (!res.ok) throw new Error(target.error ?? "Upload is not available");
+  return uploadOne(file, target);
+}
+
 type UploadTarget =
   | { mode: "cloudinary"; uploadUrl: string; fields: Record<string, string | number> }
   | { mode: "local" };

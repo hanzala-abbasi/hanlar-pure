@@ -74,3 +74,23 @@ model SiteSettings {
   deliveryInfo   String // one line per bullet
   updatedAt      DateTime @updatedAt
 }
+
+// Home page hero banners, managed from /admin/banners.
+model Banner {
+  id             String   @id @default(cuid())
+  eyebrow        String   @default("")
+  title          String
+  subtitle       String   @default("")
+  ctaLabel       String   @default("Shop Now")
+  ctaHref        String   @default("/shop")
+  imageUrl       String
+  mobileImageUrl String? // optional portrait image for phones
+  imageAlt       String   @default("")
+  focusX         Int      @default(50) // where the product sits across the image (0-100); kept centred when cropped
+  active         Boolean  @default(true)
+  sortOrder      Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([active, sortOrder])
+}

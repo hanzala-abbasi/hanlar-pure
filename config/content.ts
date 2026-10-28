@@ -4,7 +4,13 @@
 
 export type Benefit = { icon: "leaf" | "sparkles" | "droplet" | "shield"; title: string; text: string };
 export type Faq = { q: string; a: string };
-export type RitualStep = { step: string; title: string; text: string; product: { label: string; href: string } };
+export type RitualStep = {
+  step: string;
+  title: string;
+  text: string;
+  image: { src: string; alt: string };
+  product: { label: string; href: string };
+};
 
 export const brandIntro =
   "HANLAR PURE brings the botanicals our grandmothers trusted (amla, reetha, shikakai and bhringraj) together with premium oils, in hair care that feels as good as it looks.";
@@ -37,24 +43,39 @@ export const ritual: RitualStep[] = [
     step: "01",
     title: "Oil",
     text: "Massage HANLAR PURE Hair Oil into the scalp and through the lengths. Leave it on for a few hours, or overnight for a deeper treatment.",
+    image: { src: "/images/lifestyle/ritual-hands.jpg", alt: "A few drops of HANLAR PURE Hair Oil pumped into the palm" },
     product: { label: "Hair Oil", href: "/shop/hair-oil" },
   },
   {
     step: "02",
     title: "Cleanse",
     text: "Apply Signature Black Shampoo to wet hair and massage gently. Reetha and shikakai lather to lift away oil and buildup.",
+    image: {
+      src: "/images/products/signature-black-200-3.jpg",
+      alt: "Signature Black Shampoo 200 ml on a black marble plinth",
+    },
     product: { label: "Signature Black Shampoo", href: "/shop/signature-black-shampoo" },
   },
   {
     step: "03",
     title: "Shine",
     text: "Rinse thoroughly and enjoy hair that feels soft, fresh and manageable. Repeat the ritual once or twice a week.",
+    image: {
+      src: "/images/products/signature-black-200-4.jpg",
+      alt: "Signature Black Shampoo in front of smooth, glossy dark hair",
+    },
     product: { label: "Shop the collection", href: "/shop" },
   },
 ];
 
-export const aboutTeaser =
-  "We started HANLAR PURE with one idea: the ingredients that have cared for hair in our homes for generations deserve a premium place on your shelf. A few well-made products, honest labels, and personal service on every order.";
+/** "At home" lifestyle strip on the home page. */
+export const lifestyleGallery = [
+  { src: "/images/lifestyle/ritual-flatlay.jpg", alt: "Hair Oil with amla, almonds and rosemary on linen" },
+  { src: "/images/lifestyle/signature-black-100-models.jpg", alt: "Two models with Signature Black Shampoo" },
+  { src: "/images/lifestyle/ritual-shelf.jpg", alt: "Hair Oil on a marble vanity beside a mirror and towel" },
+  { src: "/images/lifestyle/hair-oil-vanity.jpg", alt: "Hair Oil on travertine with amla, almonds and a dish of oil" },
+  { src: "/images/lifestyle/ritual-bathroom.jpg", alt: "Hair Oil on a wooden bathroom shelf with a bamboo brush" },
+];
 
 export const homeFaqs: Faq[] = [
   {
