@@ -27,15 +27,15 @@ export function Gallery({ images, name }: { images: GalleryImage[]; name: string
   }, [count]);
 
   if (!current) {
-    return <div className="aspect-[4/5] bg-off-white" aria-label={`${name}: no image yet`} />;
+    return <div className="mx-auto aspect-square w-full max-w-sm bg-off-white md:aspect-[4/5] md:max-w-none" aria-label={`${name}: no image yet`} />;
   }
 
   return (
-    <div>
+    <div className="mx-auto w-full max-w-sm md:max-w-none">
       <button
         type="button"
         onClick={() => dialogRef.current?.showModal()}
-        className="group relative block aspect-[4/5] w-full cursor-zoom-in overflow-hidden bg-off-white"
+        className="group relative block aspect-square w-full cursor-zoom-in overflow-hidden bg-off-white md:aspect-[4/5]"
         aria-label="Open image viewer"
       >
         <Image
@@ -43,7 +43,7 @@ export function Gallery({ images, name }: { images: GalleryImage[]; name: string
           alt={current.alt}
           fill
           priority
-          sizes="(min-width: 1024px) 50vw, 100vw"
+          sizes="(min-width: 768px) 50vw, 384px"
           className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
         />
         <span className="absolute right-4 bottom-4 flex size-10 items-center justify-center bg-white/90 text-black">

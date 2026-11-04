@@ -7,7 +7,7 @@ import { AddToCartButton } from "@/components/product/add-to-cart-button";
 
 export function ProductCard({ product, priority = false }: { product: PublicProduct; priority?: boolean }) {
   const [primary, secondary] = product.images;
-  const sizes = "(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw";
+  const sizes = "(min-width: 1024px) 33vw, 50vw";
 
   return (
     <article className="group flex flex-col">
@@ -39,18 +39,18 @@ export function ProductCard({ product, priority = false }: { product: PublicProd
         {!product.inStock && <Badge className="absolute top-4 left-4">Out of Stock</Badge>}
       </Link>
 
-      <div className="flex flex-1 flex-col pt-5 text-center">
-        <h3 className="font-serif text-2xl">
+      <div className="flex flex-1 flex-col pt-3 text-center sm:pt-5">
+        <h3 className="font-serif text-lg leading-tight sm:text-2xl">
           <Link href={`/shop/${product.slug}`} className="transition-colors hover:text-gold-dark">
             {product.name}
           </Link>
         </h3>
-        <p className="mt-1 text-sm text-muted">
+        <p className="mt-1 mb-4 text-xs text-muted sm:mb-5 sm:text-sm">
           {product.size} · <span className="text-black">{formatPrice(product.price)}</span>
         </p>
         <AddToCartButton
           variant="outline-dark"
-          className="mx-auto mt-5 w-full max-w-60"
+          className="mx-auto mt-auto w-full max-w-60 px-2 tracking-[0.12em] sm:px-6 sm:tracking-[0.2em]"
           product={{
             id: product.id,
             name: product.name,
@@ -68,7 +68,7 @@ export function ProductCard({ product, priority = false }: { product: PublicProd
 
 export function ProductGrid({ products }: { products: PublicProduct[] }) {
   return (
-    <div className="grid gap-x-8 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-8 sm:gap-y-14 lg:grid-cols-3">
       {products.map((p, i) => (
         <ProductCard key={p.id} product={p} priority={i < 3} />
       ))}

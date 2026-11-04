@@ -6,6 +6,7 @@ import { useReducedMotion } from "framer-motion";
 import type { PublicBanner } from "@/lib/banners";
 import { ButtonLink } from "@/components/ui/button";
 import { useFocalPosition } from "@/components/ui/focal-image";
+import { toast } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
 
 const INTERVAL_MS = 6000;
@@ -39,6 +40,14 @@ function BannerImage({ banner, priority }: { banner: PublicBanner; priority: boo
       {/* eslint-disable-next-line jsx-a11y/alt-text -- alt comes from getImageProps */}
       <img {...mobile} ref={ref} />
     </picture>
+  );
+}
+
+function showOrderNotice() {
+  toast(
+    "We currently accept orders through WhatsApp only. No other payment method is available for now.",
+    "info",
+    6000,
   );
 }
 
@@ -128,9 +137,12 @@ export function Hero({ banners }: { banners: PublicBanner[] }) {
                   )}
                   <Title className="font-serif text-4xl leading-[1.05] text-white sm:text-5xl">{banner.title}</Title>
                   {banner.subtitle && <p className="mt-5 leading-relaxed text-white/80">{banner.subtitle}</p>}
-                  <ButtonLink href={banner.ctaHref} className="mt-8">
-                    {banner.ctaLabel}
-                  </ButtonLink>
+                  <div className="mt-8 flex flex-wrap gap-3">
+                    <ButtonLink href={banner.ctaHref}>{banner.ctaLabel}</ButtonLink>
+                    <ButtonLink href="/cart" variant="outline-light" onClick={showOrderNotice}>
+                      Order Now
+                    </ButtonLink>
+                  </div>
                 </div>
               </div>
             </div>

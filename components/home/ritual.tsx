@@ -20,7 +20,7 @@ export function Ritual() {
           {ritual.map((r, i) => (
             <li key={r.step}>
               <FadeIn delay={i * 0.08} className="h-full">
-                <div className="group relative aspect-[4/5] overflow-hidden bg-off-white">
+                <div className="group relative aspect-[4/3] overflow-hidden bg-off-white md:aspect-[4/5]">
                   <Image
                     src={r.image.src}
                     alt={r.image.alt}

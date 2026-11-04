@@ -1,15 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Check, X } from "lucide-react";
+import { Check, Info, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-type Toast = { id: number; message: string; tone: "success" | "error" };
+type Toast = { id: number; message: string; tone: "success" | "error" | "info"; duration: number };
 
 const EVENT = "hp:toast";
 
-export function toast(message: string, tone: Toast["tone"] = "success") {
-  window.dispatchEvent(new CustomEvent(EVENT, { detail: { message, tone } }));
+export function toast(message: string, tone: Toast["tone"] = "success", duration = 3500) {
+  window.dispatchEvent(new CustomEvent(EVENT, { detail: { message, tone, duration } }));
 }
 
 export function Toaster() {
@@ -17,10 +17,10 @@ export function Toaster() {
 
   useEffect(() => {
     const onToast = (e: Event) => {
-      const { message, tone } = (e as CustomEvent<Omit<Toast, "id">>).detail;
+      const { message, tone, duration = 3500 } = (e as CustomEvent<Omit<Toast, "id">>).detail;
       const id = Date.now() + Math.random();
-      setToasts((t) => [...t, { id, message, tone }]);
-      setTimeout(() => setToasts((t) => t.filter((x) => x.id !== id)), 3500);
+      setToasts((t) => [...t, { id, message, tone, duration }]);
+      setTimeout(() => setToasts((t) => t.filter((x) => x.id !== id)), duration);
     };
     window.addEventListener(EVENT, onToast);
     return () => window.removeEventListener(EVENT, onToast);
@@ -33,16 +33,14 @@ export function Toaster() {
           key={t.id}
           role="status"
           className={cn(
-            "pointer-events-auto flex items-center gap-3 border bg-black px-5 py-3 text-sm text-white shadow-xl",
-            t.tone === "success" ? "border-gold/50" : "border-red-500/60",
+            "pointer-events-auto flex max-w-md items-center gap-3 border bg-black px-5 py-3 text-sm text-white shadow-xl",
+            t.tone === "error" ? "border-red-500/60" : "border-gold/50",
           )}
         >
-          {t.tone === "success" ? (
-            <Check aria-hidden className="size-4 text-gold" />
-          ) : (
-            <X aria-hidden className="size-4 text-red-400" />
-          )}
-          {t.message}
+          {t.tone === "success" && <Check aria-hidden className="size-4 shrink-0 text-gold" />}
+          {t.tone === "info" && <Info aria-hidden className="size-4 shrink-0 text-gold" />}
+          {t.tone === "error" && <X aria-hidden className="size-4 shrink-0 text-red-400" />}
+          <span>{t.message}</span>
         </div>
       ))}
     </div>
