@@ -6,7 +6,16 @@ import { Badge } from "@/components/ui/badge";
 import { OrderNowButton } from "@/components/product/add-to-cart-button";
 import { ButtonLink } from "@/components/ui/button";
 
-export function ProductCard({ product, priority = false }: { product: PublicProduct; priority?: boolean }) {
+export function ProductCard({
+  product,
+  priority = false,
+  showOrderNow = true,
+}: {
+  product: PublicProduct;
+  priority?: boolean;
+  /** Off on the home page, where cards only lead to the product details. */
+  showOrderNow?: boolean;
+}) {
   const [primary, secondary] = product.images;
   const sizes = "(min-width: 1024px) 33vw, 50vw";
   const cardButton = "w-full px-2 py-2.5 tracking-[0.12em] sm:px-6 sm:py-3 sm:tracking-[0.2em]";
@@ -51,18 +60,20 @@ export function ProductCard({ product, priority = false }: { product: PublicProd
           {product.size} · <span className="text-black">{formatPrice(product.price)}</span>
         </p>
         <div className="mx-auto mt-auto grid w-full max-w-60 gap-2">
-          <OrderNowButton
-            className={cardButton}
-            product={{
-              id: product.id,
-              name: product.name,
-              slug: product.slug,
-              price: product.price,
-              size: product.size,
-              image: primary?.url,
-              inStock: product.inStock,
-            }}
-          />
+          {showOrderNow && (
+            <OrderNowButton
+              className={cardButton}
+              product={{
+                id: product.id,
+                name: product.name,
+                slug: product.slug,
+                price: product.price,
+                size: product.size,
+                image: primary?.url,
+                inStock: product.inStock,
+              }}
+            />
+          )}
           <ButtonLink href={`/shop/${product.slug}`} variant="outline-dark" className={cardButton}>
             See Details
           </ButtonLink>
@@ -72,11 +83,11 @@ export function ProductCard({ product, priority = false }: { product: PublicProd
   );
 }
 
-export function ProductGrid({ products }: { products: PublicProduct[] }) {
+export function ProductGrid({ products, showOrderNow = true }: { products: PublicProduct[]; showOrderNow?: boolean }) {
   return (
     <div className="grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-8 sm:gap-y-14 lg:grid-cols-3">
       {products.map((p, i) => (
-        <ProductCard key={p.id} product={p} priority={i < 3} />
+        <ProductCard key={p.id} product={p} priority={i < 3} showOrderNow={showOrderNow} />
       ))}
     </div>
   );

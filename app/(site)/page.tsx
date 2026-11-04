@@ -52,7 +52,7 @@ export default async function HomePage() {
           </FadeIn>
           {featured.length > 0 ? (
             <FadeIn>
-              <ProductGrid products={featured} />
+              <ProductGrid products={featured} showOrderNow={false} />
             </FadeIn>
           ) : (
             <p className="text-center text-muted">New products are coming soon.</p>

@@ -6,7 +6,6 @@ import { useReducedMotion } from "framer-motion";
 import type { PublicBanner } from "@/lib/banners";
 import { ButtonLink } from "@/components/ui/button";
 import { useFocalPosition } from "@/components/ui/focal-image";
-import { showOrderNotice } from "@/components/product/add-to-cart-button";
 import { cn } from "@/lib/utils";
 
 const INTERVAL_MS = 6000;
@@ -129,12 +128,9 @@ export function Hero({ banners }: { banners: PublicBanner[] }) {
                   )}
                   <Title className="font-serif text-4xl leading-[1.05] text-white sm:text-5xl">{banner.title}</Title>
                   {banner.subtitle && <p className="mt-5 leading-relaxed text-white/80">{banner.subtitle}</p>}
-                  <div className="mt-8 grid w-fit gap-3 sm:flex lg:grid">
-                    <ButtonLink href={banner.ctaHref}>{banner.ctaLabel}</ButtonLink>
-                    <ButtonLink href="/cart" variant="outline-light" onClick={showOrderNotice}>
-                      Order Now
-                    </ButtonLink>
-                  </div>
+                  <ButtonLink href={banner.ctaHref} className="mt-8">
+                    {banner.ctaLabel}
+                  </ButtonLink>
                 </div>
               </div>
             </div>
