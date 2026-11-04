@@ -3,11 +3,13 @@ import Link from "next/link";
 import type { PublicProduct } from "@/lib/products";
 import { formatPrice } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
-import { AddToCartButton } from "@/components/product/add-to-cart-button";
+import { OrderNowButton } from "@/components/product/add-to-cart-button";
+import { ButtonLink } from "@/components/ui/button";
 
 export function ProductCard({ product, priority = false }: { product: PublicProduct; priority?: boolean }) {
   const [primary, secondary] = product.images;
   const sizes = "(min-width: 1024px) 33vw, 50vw";
+  const cardButton = "w-full px-2 py-2.5 tracking-[0.12em] sm:px-6 sm:py-3 sm:tracking-[0.2em]";
 
   return (
     <article className="group flex flex-col">
@@ -48,19 +50,23 @@ export function ProductCard({ product, priority = false }: { product: PublicProd
         <p className="mt-1 mb-4 text-xs text-muted sm:mb-5 sm:text-sm">
           {product.size} · <span className="text-black">{formatPrice(product.price)}</span>
         </p>
-        <AddToCartButton
-          variant="outline-dark"
-          className="mx-auto mt-auto w-full max-w-60 px-2 tracking-[0.12em] sm:px-6 sm:tracking-[0.2em]"
-          product={{
-            id: product.id,
-            name: product.name,
-            slug: product.slug,
-            price: product.price,
-            size: product.size,
-            image: primary?.url,
-            inStock: product.inStock,
-          }}
-        />
+        <div className="mx-auto mt-auto grid w-full max-w-60 gap-2">
+          <OrderNowButton
+            className={cardButton}
+            product={{
+              id: product.id,
+              name: product.name,
+              slug: product.slug,
+              price: product.price,
+              size: product.size,
+              image: primary?.url,
+              inStock: product.inStock,
+            }}
+          />
+          <ButtonLink href={`/shop/${product.slug}`} variant="outline-dark" className={cardButton}>
+            See Details
+          </ButtonLink>
+        </div>
       </div>
     </article>
   );

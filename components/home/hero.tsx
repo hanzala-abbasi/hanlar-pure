@@ -6,7 +6,7 @@ import { useReducedMotion } from "framer-motion";
 import type { PublicBanner } from "@/lib/banners";
 import { ButtonLink } from "@/components/ui/button";
 import { useFocalPosition } from "@/components/ui/focal-image";
-import { toast } from "@/components/ui/toast";
+import { showOrderNotice } from "@/components/product/add-to-cart-button";
 import { cn } from "@/lib/utils";
 
 const INTERVAL_MS = 6000;
@@ -40,14 +40,6 @@ function BannerImage({ banner, priority }: { banner: PublicBanner; priority: boo
       {/* eslint-disable-next-line jsx-a11y/alt-text -- alt comes from getImageProps */}
       <img {...mobile} ref={ref} />
     </picture>
-  );
-}
-
-function showOrderNotice() {
-  toast(
-    "We currently accept orders through WhatsApp only. No other payment method is available for now.",
-    "info",
-    6000,
   );
 }
 
