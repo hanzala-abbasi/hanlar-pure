@@ -97,7 +97,7 @@ export function Hero({ banners }: { banners: PublicBanner[] }) {
               {/* Visuals: full width. Desktop shows a blurred, darkened copy edge to edge with the sharp banner on the right. */}
               <div
                 className={cn(
-                  "relative aspect-[4/5] overflow-hidden transition-opacity duration-1000 ease-out sm:aspect-[3/2] lg:absolute lg:inset-0 lg:aspect-auto",
+                  "relative aspect-square overflow-hidden transition-opacity duration-1000 ease-out sm:aspect-[3/2] lg:absolute lg:inset-0 lg:aspect-auto",
                   active ? "opacity-100" : "opacity-0",
                 )}
               >
@@ -137,7 +137,7 @@ export function Hero({ banners }: { banners: PublicBanner[] }) {
                   )}
                   <Title className="font-serif text-4xl leading-[1.05] text-white sm:text-5xl">{banner.title}</Title>
                   {banner.subtitle && <p className="mt-5 leading-relaxed text-white/80">{banner.subtitle}</p>}
-                  <div className="mt-8 flex flex-wrap gap-3">
+                  <div className="mt-8 grid w-fit gap-3 sm:flex lg:grid">
                     <ButtonLink href={banner.ctaHref}>{banner.ctaLabel}</ButtonLink>
                     <ButtonLink href="/cart" variant="outline-light" onClick={showOrderNotice}>
                       Order Now
